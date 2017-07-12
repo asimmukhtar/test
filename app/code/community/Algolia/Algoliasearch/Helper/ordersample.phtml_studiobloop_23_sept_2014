@@ -1,0 +1,125 @@
+<?php 	$enabled = Mage::helper('core')->isModuleEnabled('Amcg_SampleOrdering');
+		if($enabled)
+		{
+			$_product = $this->getProduct();
+			if($_product->isSaleable())
+			{
+				/*$found = false;
+				$items = Mage::getSingleton('checkout/cart')->getItems();
+				foreach($items as $item) {
+					$prod = Mage::getModel('catalog/product')
+							   ->loadByAttribute('sku',$item->getSku());
+					if($prod != NULL && $_product->getId() == $prod->getId())
+					{
+						$found = true;
+						break;
+					}
+				} */
+				$productModel = Mage::getModel('catalog/product')->load($_product->getId());
+				$samplesAllowed = trim($productModel->getAttributeText('samples_allowed')); 
+				//if($samplesAllowed == "Both" || $samplesAllowed == "Cut" || $samplesAllowed == "Full")
+				{ ?>
+					<div class="order-sample">
+						<?php /*if($found == false)*/
+						{ ?>
+							<span class="order-sample-not-in-cart osnic-<?php echo $productModel->getId();?>">
+							<?php 
+							if($samplesAllowed == "Both" || $samplesAllowed == "Cut") 
+							{     
+                                                            $cutPrice = (double)trim($productModel->getSampleCutPrice());
+                                                            if($cutPrice > 0.0)
+                                                            {
+                                                                $priceSample = Mage::helper('core')->currency($cutPrice, true, false);
+                                                            }
+                                                            else
+                                                            {
+                                                                $priceSample = "£0.99";
+                                                            }
+                                          
+                                                            ?>
+                                                                <button type="button" title="<?php echo $this->__('Order Cut Sample'); ?>" class="new_button order-sample-cut"><span>
+                                                                        <span class="cut-sample-priced"><?php echo $this->__('Order cut sample for ').$priceSample; ?></span>
+                                                                        <span class="cut-sample-free" style="display: none;"><?php echo $this->__('Order free cut sample'); ?></span>
+                                                                        </span></button>                                                            
+                                                            <?php                                                                                                                                                                                  
+							}
+							
+							if($samplesAllowed == "Both" || $samplesAllowed == "Full") 
+							{ 						
+								$multiplier = (double)trim($productModel->getSampleFullMultiplier());
+								if($multiplier != 0.0)
+								{
+									$specialPrice = $productModel->getFinalPrice(1, $productModel) * $multiplier;
+									// Make sure we don't have a negative
+									if ($specialPrice > 0.0) {
+										$priceSample = Mage::helper('core')->currency($specialPrice, true, false); ?>
+										<button type="button" title="<?php echo $this->__('Order Sample'); ?>" class="new_button order-sample-full"><span><span><?php echo $this->__('Order full sample for ').$priceSample; ?></span></span></button>
+									<?php }
+								}						
+							} 
+							 ?>
+							</span>
+						<?php } 
+						//else
+						{ ?>
+							<span class="order-sample-in-cart osic-<?php echo $productModel->getId();?>" style="display: none;"><?php echo $this->__("Item already in cart.") ?></span>
+						<?php } ?>
+						<input type="hidden" name="sample_options" value="" class="sample-options"/>
+					</div>
+				<?php } ?>
+	
+				<script type="text/javascript">
+					var sampleOrderingUpdate;
+					jQuery(function($) {
+					
+						function submitOrder(button, sampleText)
+						{
+							/* Store the extra-options and blank them temporarily. */
+							var closeForm = $(button).closest("form");
+							var closeDiv = $(button).closest(".order-sample");
+							var extraOptions = $("input[name='extra_options']", closeForm);
+							var temp = extraOptions.val();
+							extraOptions.val("");
+							$("input[name='sample_options']", closeDiv).val(sampleText);
+							productAddToCartForm.submit(button);
+							extraOptions.val(temp);
+							$("input[name='sample_options']", closeDiv).val("");
+						}
+						
+						sampleOrderingUpdate = function sampleOrderingUpdateInternal()
+						{
+							$(".order-sample-not-in-cart").show();
+							$(".order-sample-in-cart").hide();
+							for(var i=0; i < sampleOrderingInCart.length; i++)
+							{
+								$(".osic-" + sampleOrderingInCart[i]).show();
+								$(".osnic-" + sampleOrderingInCart[i]).hide();
+							}
+                                                        if(cutTilesInCart < 3)
+                                                        {
+                                                            $(".cut-sample-priced").hide();
+                                                            $(".cut-sample-free").show();
+                                                        }
+                                                        else
+                                                        {
+                                                            $(".cut-sample-priced").show();
+                                                            $(".cut-sample-free").hide();
+                                                        }
+						}
+					
+						$(document).ready(function(){
+							sampleOrderingUpdate();
+							$(".order-sample-full").bind('click', function (e) {  
+								submitOrder(this, "<?php echo $this->__('Full Size'); ?>");
+							});
+							
+							$(".order-sample-cut").bind('click', function (e) {  
+								submitOrder(this, "<?php echo $this->__('Cut Size'); ?>");
+							});
+											
+						});
+					
+					});
+				</script>
+<?php 		}
+		} ?>

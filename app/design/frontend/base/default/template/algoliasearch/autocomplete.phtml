@@ -1,0 +1,142 @@
+<?php
+
+/** @var Algolia_Algoliasearch_Helper_Config $config */
+$config = Mage::helper('algoliasearch/config');
+
+/** @var Mage_CatalogSearch_Helper_Data $catalogSearchHelper */
+$catalogSearchHelper = $this->helper('catalogsearch');
+
+$placeholder = $this->__('Search for products, categories, ...');
+
+/** Render form with autocomplete input **/
+if ($config->isDefaultSelector()): ?>
+    <form id="search_mini_form" action="<?php echo $catalogSearchHelper->getResultUrl() ?>" method="get">
+        <div id="algolia-searchbox">
+            <!-- <label for="search"><?php echo $this->__('Search:') ?></label> -->
+            <input id="search" type="text" name="<?php echo $catalogSearchHelper->getQueryParamName() ?>" class="input-text algolia-search-input" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off" placeholder="<?php echo $placeholder; ?>" />
+             <button class="button-search fa fa-search"></button> 
+            <span class="clear-cross clear-query-autocomplete"></span>
+            <span id="algolia-glass" class="magnifying-glass" width="24" height="24"></span>
+        </div>
+    </form>
+<?php endif; ?>
+
+
+<script type="text/javascript">
+
+// Start Prototype Bootstrap Conflict /
+
+jQuery.noConflict();
+
+pluginsToDisable = ['collapse', 'dropdown', 'modal', 'tooltip', 'popover', 'tab'];
+
+if (Prototype.BrowserFeatures.ElementExtensions) {
+
+    var disablePrototypeJS = function (method, pluginsToDisable) {
+
+            var handler = function (event) {
+
+                event.target[method] = undefined;
+
+                setTimeout(function () {
+
+                    delete event.target[method];
+
+                }, 0);
+
+            };
+
+            pluginsToDisable.each(function (plugin) { 
+
+                jQuery(window).on(method + '.bs.' + plugin, handler);
+
+            });
+
+        },
+
+        pluginsToDisable = ['collapse', 'dropdown', 'modal', 'tooltip', 'popover', 'tab'];
+
+    disablePrototypeJS('show', pluginsToDisable);
+
+    disablePrototypeJS('hide', pluginsToDisable);
+
+}
+
+ // End Prototype Bootstrap Conflict /
+
+
+ jQuery(document).ready(function () {
+	if (jQuery(window).width()<768) {
+		jQuery("#top-search").insertAfter(".mainnav-v1");
+		jQuery("#cart").removeClass("inner");
+		jQuery("#ves-mainnav").appendTo(".mobile_navbar");
+			    jQuery('.dropdown-menu').toggle();
+		jQuery(".megamenu.menu-offcanvas-content .parent.dropdown").each(function(i,v){
+   
+	if(i == 0 )
+	 	jQuery(this).find('.dropdown-menu').toggle();
+	});
+
+	jQuery(".dropdown-toggle").each(function(){
+
+		jQuery(this).attr('href','javascript:void(0);');
+	})
+	jQuery('.dropdown').on("click", function(){
+		
+				
+	})
+	jQuery(".dropdown-toggle").on("click", function(e){
+		console.log('clicked');
+			jQuery(this).parent().addClass('dropdown');	
+	jQuery(this).siblings('.dropdown-menu').toggle();
+	});
+
+};
+	jQuery(window).resize(function(){
+		if (jQuery(window).width()<768) {
+			jQuery("#top-search").insertAfter(".mainnav-v1");
+			//jQuery("#cart").removeClass("inner");
+			jQuery("#ves-mainnav").appendTo(".mobile_navbar");
+
+				    jQuery('.dropdown-menu').toggle();
+		jQuery(".megamenu.menu-offcanvas-content .parent.dropdown").each(function(i,v){
+   
+		if(i == 0 )
+		 	jQuery(this).find('.dropdown-menu').toggle();
+		});
+
+		jQuery(".dropdown-toggle").each(function(){
+
+			jQuery(this).attr('href','javascript:void(0);');
+		})
+		jQuery('.dropdown').on("click", function(){
+			
+					
+		})
+		jQuery(".dropdown-toggle").on("click", function(e){
+			console.log('clicked');
+				jQuery(this).parent().addClass('dropdown');	
+		jQuery(this).siblings('.dropdown-menu').toggle();
+
+		});
+
+		}
+		else{
+			jQuery("#top-search").insertAfter(".header_phone_numbers");
+			//jQuery("#cart").removeClass("inner");
+			jQuery("#ves-mainnav").appendTo(".desktop_menu");
+
+			jQuery(".nav.navbar-nav.megamenu .parent.dropdown").each(function(i,v){
+   
+		
+		 	jQuery(this).find('.dropdown-menu').removeAttr('style');
+		});
+
+		}
+	});
+
+
+
+})
+
+</script>
