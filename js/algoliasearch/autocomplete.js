@@ -107,7 +107,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			
 			$(window).resize(function () {
 				fixAutocompleteCssSticky(menu);
-				alert('this is test');
 			});
 		});
 	});
