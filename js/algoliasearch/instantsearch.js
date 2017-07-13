@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function (event) {
 	algoliaBundle.$(function ($) {
-		
+		//asim test
 		/** We have nothing to do here if instantsearch is not enabled **/
 		if (!algoliaConfig.instant.enabled || !(algoliaConfig.isSearchPage || !algoliaConfig.autocomplete.enabled)) {
 			return;
